@@ -20,7 +20,7 @@ Available modules and algorithms:
   * header files for the reinforcement learning source code generated with FogML
 
 Examples:
-* Arduino - an application that detects anomalies and classifies the fan rotation speed
+* Arduino - application that detects anomalies and classifies the fan rotation speed
   * https://github.com/tszydlo/FogML-Arduino
-* Zephyr OS - an application that detects gestures performed by the device
+* Zephyr OS - application that detects gestures performed by the device
   * WiP
