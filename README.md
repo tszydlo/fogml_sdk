@@ -1,6 +1,6 @@
 # FogML-SDK
 
-SDK implements FogML machine learning algorithms for resource-constrained devices.
+SDK implements FogML [https://github.com/tszydlo/FogML] machine learning algorithms for resource-constrained devices.
 
 Available modules and algorithms:
 * `anomaly_rt`
