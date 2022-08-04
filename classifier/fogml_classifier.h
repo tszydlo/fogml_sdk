@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-int classifier2(float *x);
+int classifier(float *x);
 
 #ifdef __cplusplus
 } // extern "C"

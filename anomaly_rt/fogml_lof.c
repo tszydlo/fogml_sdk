@@ -122,6 +122,8 @@ float tinyml_lof_score(float *vector, tinyml_lof_config_t *config) {
 void tinyml_lof_learn(tinyml_lof_config_t *config) {
   int neighbours[10];
   
+  if (config->n < (config->parameter_k + 1)) return;
+
   for(int i = 0; i < config->n; i++) {
     tinyml_lof_k_neighbours(i, neighbours, config);
 
