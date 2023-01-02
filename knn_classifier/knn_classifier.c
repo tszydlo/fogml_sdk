@@ -1,5 +1,4 @@
 #include "knn_classifier.h"
-#include <stdlib.h>
 
 float distance(float *xs, int n, float *ys) {
   float d = 0;
