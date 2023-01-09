@@ -27,6 +27,12 @@
 #include <random/rand32.h>
 #endif
 
+#if defined(__GNUC__)
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
