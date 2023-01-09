@@ -21,3 +21,16 @@ void tinyml_zscore_init(int vector_size, tinyml_zscore_config_t *config)
     config->Q = (float *)calloc(vector_size, sizeof(float));
     config->n = 0;
 }
+
+
+float *tinyml_zscore_score(float *vector, tinyml_zscore_config_t *config)
+{
+    int size = config->vector_size;
+    float *score = (float*)calloc(size,sizeof(float));
+    for(int i =0;i< size;i++)
+    {
+        score[i] = sqrt(config->Q[i]/config->n);
+    }
+    return score;
+}
+
