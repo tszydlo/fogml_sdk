@@ -21,6 +21,7 @@
 #include "scaler/fogml_scaler.h"
 #include "anomaly_rt/fogml_lof.h"
 #include "anomaly_rt/fogml_reservoir.h"
+#include "anomaly_rt/fogml_zscore.h"
 #include "classifier/fogml_classifier.h"
 #include "dsp/fogml_dsp.h"
 #include "ports/fogml_ports.h"
