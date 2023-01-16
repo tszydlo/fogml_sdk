@@ -6,6 +6,7 @@ Available modules and algorithms:
 * `anomaly_rt`
   * reservoir sampling
   * Local Outliner Factor
+  * z score
 
 * `classifier`
   * header file for the source code generated with FogML
@@ -26,3 +27,5 @@ Examples:
   * https://github.com/tszydlo/FogML-Zephyr
 * Zephyr OS + LwM2M + NB-IoT - TinyML connected via LwM2M protocol over NB-IoT
   * https://github.com/tszydlo/FogML-Zephyr-LwM2M
+* Z score test 
+  * https://github.com/jagodek/fogml_sdk_zscore_test.git
