@@ -19,15 +19,18 @@ extern "C" {
 #endif
 
 #include <stdlib.h>
+#include <math.h>
+#include "kissfft/kiss_fftr.h"
 #include "../ports/fogml_ports.h"
 
-#define TINYML_DSP_FFT  1 //peaks
+#define TINYML_DSP_FFT  1 //FFT 1 peak
 #define TINYML_DSP_BASE  2 // (max-min), mean
 #define TINYML_DSP_VARIANCE  3 //variance
 #define TINYML_DSP_ENERGY  4 //energy
 #define TINYML_DSP_CROSSINGS  5 //crossing through mean
 #define TINYML_DSP_MINMAX  6 //min, max
 
+#define TINYML_DSP_FFT_LEN  2 // amp, freq
 #define TINYML_DSP_BASE_LEN  2 // (max-min), mean
 #define TINYML_DSP_VARIANCE_LEN  1 //variance
 #define TINYML_DSP_ENERGY_LEN  1 //energy
@@ -38,7 +41,8 @@ extern "C" {
 //#define ARRAY_SIZE(arr)     (sizeof(arr) / sizeof((arr)[0]))
 
 typedef struct {
-    int peaks;
+    float freq;
+    float treshold;
 } tinyml_block_fft_config_t;
 
 typedef struct {

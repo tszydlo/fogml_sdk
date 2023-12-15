@@ -13,19 +13,6 @@
 
 #include "fogml_dsp.h"
 
-int tinyml_dsp_processing_fft(float *time_series_data, float *vector, int offset, tinyml_block_base_config_t *base_config, tinyml_dsp_config_t *config ) {
-    //transpose input data
-    float *axis = (float*)malloc(sizeof(float)*config->time_ticks*config->axis_n);
-
-    for(int i=0; i<config->time_ticks; i++) {
-        for(int j=0; i<config->axis_n; j++) {
-            axis[j * config->time_ticks + i] = time_series_data[i * config->axis_n + j];
-        }
-    }
-
-    return -1;
-}
-
 int tinyml_dsp_processing_base(float *time_series_data, float *vector, int offset, tinyml_block_base_config_t *base_config, tinyml_dsp_config_t *config ) {
     float *sum = (float*)malloc(sizeof(float) * config->axis_n);
     float *min = (float*)malloc(sizeof(float) * config->axis_n);
@@ -194,6 +181,81 @@ int tinyml_dsp_processing_passthrought(float *time_series_data, float *vector, i
     return config->axis_n;
 }
 
+kiss_fft_scalar *in = NULL;
+kiss_fft_cpx *out = NULL;
+kiss_fftr_cfg cfg = NULL;
+float *fft_amp = NULL;
+
+int tinyml_dsp_processing_fft(float *time_series_data, float *vector, int offset, tinyml_block_fft_config_t *fft_config, tinyml_dsp_config_t *config ) {
+    //kiss_fft_scalar in[N];
+    //kiss_fft_cpx out[N / 2 + 1];
+
+    if (in ==  NULL) {
+        in = (kiss_fft_scalar*)malloc(sizeof(kiss_fft_scalar) * config->time_ticks);
+        out = (kiss_fft_cpx*)malloc(sizeof(kiss_fft_cpx) * config->time_ticks);
+        cfg = kiss_fftr_alloc(config->time_ticks, 0, NULL, NULL);
+        fft_amp = (float*)malloc(sizeof(float) * config->time_ticks / 2 + 1);
+
+    }
+
+    //https://stackoverflow.com/questions/14536950/applying-kiss-fft-on-audio-samples-and-getting-nan-output
+    float max_amp = -1;
+    int max_amp_i = -1;
+
+    for(int j=0; j<config->axis_n; j++) {
+
+        //fogml_printf("\n[");
+        for(int i=0; i<config->time_ticks; i++) {
+            float v = time_series_data[i * config->axis_n + j];
+            in[i] = v;
+            //fogml_printf_float(v);
+            //fogml_printf(" ");
+        }
+        //fogml_printf("]\n");
+        if (cfg != NULL)
+        {
+            kiss_fftr(cfg, in, out);
+
+            //fogml_printf("\n>");
+            for(int l = 0; l < config->time_ticks / 2 + 1; l++) {
+                float amp = sqrtf(out[l].r*out[l].r+out[l].i*out[l].i) / config->time_ticks;
+                fft_amp[l] = amp;
+                
+                //fogml_printf_float(amp);
+                //fogml_printf(" ");
+            }
+            
+            //fogml_printf("<\n");
+
+            //finding 1st peak
+            max_amp = -1;
+            max_amp_i = -1;
+            //DC component should not be included
+            for(int l = 1; l < config->time_ticks / 2 + 1; l++) {
+                if (fft_amp[l]>max_amp){
+                    max_amp = fft_amp[l];
+                    max_amp_i = l;
+                }
+            }
+
+        } else {
+            fogml_printf("FFT NO MEMORY\n");
+        }
+
+        if (max_amp<fft_config->treshold){
+            vector[offset++] = 0;
+            vector[offset++] = max_amp;
+        } else {
+            vector[offset++] = (fft_config->freq / 2 / (config->time_ticks / 2)) * max_amp_i;
+            vector[offset++] = max_amp;
+        }
+    }
+
+    free(cfg);
+
+    return config->axis_n;
+}
+
 //t1_x, t1_y, t1_z, t2_x, t2_y, t2_z
 void tinyml_dsp(float *time_series_data, float *vector, tinyml_dsp_config_t *config) {
     //Serial.print("DSP BLOCKS = ");
@@ -222,7 +284,10 @@ void tinyml_dsp(float *time_series_data, float *vector, tinyml_dsp_config_t *con
                 //Serial.println("DSP CROSSINGS BLOCK");
                 offset += tinyml_dsp_processing_crossings(time_series_data, vector, offset, (tinyml_block_crossings_config_t*) config->blocks[b]->config, config);
                 break;
-
+            case TINYML_DSP_FFT:
+                //Serial.println("FFT BLOCK");
+                offset += tinyml_dsp_processing_fft(time_series_data, vector, offset, (tinyml_block_fft_config_t*) config->blocks[b]->config, config);
+                break;
             default:
                 break;
         }
