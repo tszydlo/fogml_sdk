@@ -194,7 +194,7 @@ int tinyml_dsp_processing_fft(float *time_series_data, float *vector, int offset
         in = (kiss_fft_scalar*)malloc(sizeof(kiss_fft_scalar) * config->time_ticks);
         out = (kiss_fft_cpx*)malloc(sizeof(kiss_fft_cpx) * config->time_ticks);
         cfg = kiss_fftr_alloc(config->time_ticks, 0, NULL, NULL);
-        fft_amp = (float*)malloc(sizeof(float) * config->time_ticks / 2 + 1);
+        fft_amp = (float*)malloc(sizeof(float) * (config->time_ticks / 2 + 1));
 
     }
 
@@ -251,7 +251,7 @@ int tinyml_dsp_processing_fft(float *time_series_data, float *vector, int offset
         }
     }
 
-    free(cfg);
+    // free(cfg);
 
     return config->axis_n;
 }
