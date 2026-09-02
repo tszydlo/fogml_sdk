@@ -23,8 +23,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
-#include <zephyr.h>
-#include <random/rand32.h>
+#include <zephyr/kernel.h>
+#include <zephyr/random/random.h>
 #endif
 
 #ifdef __cplusplus
