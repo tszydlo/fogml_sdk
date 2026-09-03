@@ -32,7 +32,7 @@ void tinyml_reservoir_verbose(tinyml_reservoir_sampling_config_t *config) {
       if (i < config->k - 1) {
         fogml_printf(",");
       } else {
-        fogml_printf("\n");
+        fogml_printf("");
       }
 
   }

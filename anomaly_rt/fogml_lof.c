@@ -16,6 +16,8 @@
 #define LOF_VECTOR(i, config) &(config->data[i*config->vector_size])
 #define TINYML_MAX_DISTANCE  99999.0
 
+//#define LOF_VERBOSE
+
 void tinyml_lof_init(tinyml_lof_config_t *config) {
 }
 
@@ -105,6 +107,8 @@ float tinyml_lof_score(float *vector, tinyml_lof_config_t *config) {
 
   float score = 0;
 
+  if (config->n < (config->parameter_k + 1)) return score;
+
   tinyml_lof_k_neighbours_vec(vector, neighbours, config);
   //tinyml_lof_k_neighbours(a, neighbours, config);
 
@@ -127,28 +131,33 @@ void tinyml_lof_learn(tinyml_lof_config_t *config) {
   for(int i = 0; i < config->n; i++) {
     tinyml_lof_k_neighbours(i, neighbours, config);
 
-    //Serial.print("Neighbours ");
-    //Serial.print(i);
-    //Serial.print(":");
-    //for(int x=0; x<config->parameter_k; x++) {
-    //  Serial.print(neighbours[x]);
-    //  Serial.print(" ");
-    //}
-    //Serial.println();
+#ifdef LOF_VERBOSE
+    printf("Neighbours ");
+    printf("%d", i);
+    printf(":");
+    for(int x=0; x<config->parameter_k; x++) {
+      printf("%d", neighbours[x]);
+      printf(" ");
+    }
+    printf("\n");
+#endif
 
     //k-distance calculation
     config->k_distance[i] = tinyml_lof_normal_distance_vec(LOF_VECTOR(i,config), LOF_VECTOR(neighbours[config->parameter_k - 1],config), config->vector_size);
     //lrd distance calculation
     config->lrd[i] = tinyml_lof_reachability_density(LOF_VECTOR(i,config), neighbours, config);
 
-    //Serial.print("K-distance/LRD ");
-    //Serial.print(i);
-    //Serial.print(":");
-    //Serial.print(config->k_distance[i]);
-    //Serial.print(" / ");
-    //Serial.print(config->lrd[i]);
-    //Serial.println();
+#ifdef LOF_VERBOSE    
+    printf("K-distance/LRD ");
+    printf("%d", i);
+    printf(":");
+    printf("%f", config->k_distance[i]);
+    printf(" / ");
+    printf("%f", config->lrd[i]);
+    printf("\n");
     
-    //Serial.println(i);
+    printf("%d", i);
+#endif
+
   }
 }
